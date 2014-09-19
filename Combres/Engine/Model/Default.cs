@@ -32,6 +32,7 @@ namespace Combres
         public static class ResourceSet
         {
             public static readonly bool DebugEnabled = false;
+	        public static readonly bool FileErrorsEnabled = false;
             public static readonly bool IgnorePipelineWhenDebug = false;
             public static readonly Type VersionGeneratorType = typeof (HashCodeVersionGenerator);
             public static readonly bool CompressionEnabled = true;

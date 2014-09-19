@@ -73,6 +73,12 @@ namespace Combres
         /// </summary>
         public bool DefaultDebugEnabled { get; private set; }
 
+		/// <summary>
+		/// Decide if you want to see the error 500 when a file not exists <see cref="ResourceSet.FileErrorsEnabled"/> is 
+		/// not specified.
+		/// </summary>
+		public bool ShownotFoundFilesError { get; private set; }
+
         /// <summary>
         /// Default setting which will be used if <see cref="ResourceSet.IgnorePipelineWhenDebug"/> is 
         /// not specified.
@@ -259,6 +265,13 @@ namespace Combres
                 : debugEnabled.Equals(SchemaConstants.Set.Auto, StringComparison.OrdinalIgnoreCase) 
                     ? HttpContext.Current.IsDebuggingEnabled 
                     : bool.Parse(debugEnabled);
+
+			var fileErrorsEnabled = rsXe.Attr<string>(SchemaConstants.Setting.ShownotFoundFilesError);
+			ShownotFoundFilesError = string.IsNullOrEmpty(fileErrorsEnabled) 
+                ? Default.ResourceSet.FileErrorsEnabled
+                : fileErrorsEnabled.Equals(SchemaConstants.Set.Auto, StringComparison.OrdinalIgnoreCase) 
+                    ? HttpContext.Current.IsDebuggingEnabled 
+                    : bool.Parse(fileErrorsEnabled);
 
             DefaultIgnorePipelineWhenDebug = (bool)rsXe.Attr<string>(SchemaConstants.Setting.DefaultIgnorePipelineWhenDebug)
                 .ConvertToType(typeof(bool), Default.ResourceSet.IgnorePipelineWhenDebug);

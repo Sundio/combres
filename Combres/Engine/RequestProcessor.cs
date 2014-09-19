@@ -161,8 +161,7 @@ namespace Combres
                 cache.SetLastModified(DateTime.Now);
                 cache.SetExpires(DateTime.Now.Add(ResourceSet.DurationInDays)); // For HTTP 1.0 browsers
                 cache.SetValidUntilExpires(true);
-                cache.SetCacheability(HttpCacheability.Public); 
-                cache.SetRevalidation(HttpCacheRevalidation.AllCaches); 
+				cache.SetRevalidation(HttpCacheRevalidation.AllCaches); 
                 cache.VaryByHeaders["Accept-Encoding"] = true; // Tell proxy to cache different versions depending on Accept-Encoding
             }
 

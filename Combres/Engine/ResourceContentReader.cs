@@ -16,6 +16,7 @@
 // The latest version of this file can be found at http://combres.codeplex.com
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -70,50 +71,65 @@ namespace Combres
             string content;
             if (Log.IsDebugEnabled)
                 Log.Debug("Retrieving new content for " + resource);
-            switch (resource.Mode)
-            {
-                case ResourceMode.Dynamic:
-                    var absoluteUrl = resource.Path.ToAbsoluteUrl();
-                    if (absoluteUrl == null)
-                        throw new ResourceNotFoundException(resource.Path);
-                    try
-                    {
-                        using (var webClient = new WebClient())
-                        {
-                            if (resource.ForwardCookie)
-                            {
-                                var context = HttpContext.Current;
-                                if (context == null)
-                                    throw new CombresException("HttpContext must present to forward cookie");
-                                webClient.Headers[HttpRequestHeader.Cookie] = context.Request.Headers["Cookie"];
-                            }
-                            webClient.Headers[HttpRequestHeader.AcceptEncoding] = "gzip,deflate";
-                            var bytes = webClient.DownloadData(absoluteUrl);
-                            var acceptEncoding = webClient.ResponseHeaders[HttpResponseHeader.ContentEncoding];
-                            if (acceptEncoding != null)
-                            {
-                                if (acceptEncoding.Contains("gzip"))
-                                    bytes = bytes.UnGzip();
-                                else if (acceptEncoding.Contains("deflate"))
-                                    bytes = bytes.UnDeflate();
-                            }
-                            content = Encoding.UTF8.GetString(bytes);
-                        }
-                    }
-                    catch (WebException ex)
-                    {
-                        throw new ResourceNotFoundException(resource.Path, ex);
-                    }
-                    break;
-                default:
-                    var fullPath = HostingEnvironment.MapPath(resource.Path);
-                    if (string.IsNullOrEmpty(fullPath) || !File.Exists(fullPath))
-                        throw new ResourceNotFoundException(resource.Path);
-                    content = File.ReadAllText(fullPath);
-                    break;
-            }
-            Cache.Set(resource, content);
-            return content;
+
+			try
+			{
+				switch (resource.Mode)
+				{
+					case ResourceMode.Dynamic:
+						var absoluteUrl = resource.Path.ToAbsoluteUrl();
+						if (absoluteUrl == null)
+							throw new ResourceNotFoundException(resource.Path);
+						try
+						{
+							using (var webClient = new WebClient())
+							{
+								if (resource.ForwardCookie)
+								{
+									var context = HttpContext.Current;
+									if (context == null)
+										throw new CombresException("HttpContext must present to forward cookie");
+									webClient.Headers[HttpRequestHeader.Cookie] = context.Request.Headers["Cookie"];
+								}
+								webClient.Headers[HttpRequestHeader.AcceptEncoding] = "gzip,deflate";
+								var bytes = webClient.DownloadData(absoluteUrl);
+								var acceptEncoding = webClient.ResponseHeaders[HttpResponseHeader.ContentEncoding];
+								if (acceptEncoding != null)
+								{
+									if (acceptEncoding.Contains("gzip"))
+										bytes = bytes.UnGzip();
+									else if (acceptEncoding.Contains("deflate"))
+										bytes = bytes.UnDeflate();
+								}
+								content = Encoding.UTF8.GetString(bytes);
+							}
+						}
+						catch (WebException ex)
+						{
+							throw new ResourceNotFoundException(resource.Path, ex);
+						}
+						break;
+					default:
+						var fullPath = HostingEnvironment.MapPath(resource.Path);
+						if (string.IsNullOrEmpty(fullPath) || !File.Exists(fullPath))
+							throw new ResourceNotFoundException(resource.Path);
+						content = File.ReadAllText(fullPath);
+						break;
+				}
+				Cache.Set(resource, content);
+			}
+			catch (ResourceNotFoundException ex)
+			{
+				if (resource.ParentSet.FileErrorsEnabled)
+				{
+					throw;
+				}
+				else
+				{
+					content = string.Empty;
+				}
+			}
+			return content;
         }
 
         /// <summary>

@@ -17,6 +17,7 @@
 #endregion
 
 using System;
+using System.Configuration;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
@@ -74,7 +75,28 @@ namespace Combres
         {
             ParentSet = parent;
             Path = xe.Attr<string>(SchemaConstants.Resource.Path);
-            Mode = xe.Attr(SchemaConstants.Resource.Mode, Default.Resource.Mode);
+			if (Path.Contains("${"))
+			{
+				Path.Split('$').ToList().ForEach(p =>
+				{
+					if (p.Contains('{'))
+					{
+						string resourceSetting = p.Split(new char[] {'{', '}'})[1];
+						String resourceContent = ConfigurationManager.AppSettings[resourceSetting];
+						if (String.IsNullOrEmpty(resourceContent))
+						{
+							resourceContent = "empty";
+						}
+						Path = Path.Replace("${" + resourceSetting + "}", resourceContent);
+					}
+				});
+			}
+			Mode = xe.Attr(SchemaConstants.Resource.Mode, Default.Resource.Mode);
+			if (Mode == ResourceMode.Auto)
+			{
+				Mode = Path.StartsWith("http") ? ResourceMode.Dynamic : ResourceMode.Static;
+			}
+
             ForwardCookie = xe.Attr(SchemaConstants.Resource.ForwardCookie,
                 Default.Resource.ForwardCookie);
             Minifier = ParentSet.Type == ResourceType.JS

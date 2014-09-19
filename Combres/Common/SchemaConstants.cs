@@ -40,6 +40,7 @@ namespace Combres
             public const string DefaultVersion = "defaultVersion";
             public const string DefaultVersionGenerator = "defaultVersionGenerator";
             public const string DefaultDebugEnabled = "defaultDebugEnabled";
+			public const string ShownotFoundFilesError = "shownotFoundFilesError";
             public const string DefaultIgnorePipelineWhenDebug = "defaultIgnorePipelineWhenDebug";
             public const string DefaultCompressionEnabled = "defaultCompressionEnabled";
             public const string DefaultJSMinifierRef = "defaultJSMinifierRef";
@@ -56,6 +57,7 @@ namespace Combres
             public const string VersionGenerator = "versionGenerator";
             public const string Type = "type";
             public const string DebugEnabled = "debugEnabled";
+			public const string FileErrorsEnabled = "fileErrorsEnabled";
             public const string IgnorePipelineWhenDebug = "ignorePipelineWhenDebug";
             public const string CompressionEnabled = "compressionEnabled";
             public const string MinifierRef = "minifierRef";

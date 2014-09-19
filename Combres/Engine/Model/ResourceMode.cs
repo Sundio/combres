@@ -31,6 +31,11 @@ namespace Combres
         /// <summary>
         /// This resource is static and thus can be loaded directly from file system.
         /// </summary>
-        Static = 1    
+        Static = 1,
+
+		/// <summary>
+		/// This resource is auto, dynamic if starts by http and static if not.
+		/// </summary>
+		Auto = 2,
     }
 }

@@ -92,6 +92,11 @@ namespace Combres
         /// </summary>
         public bool DebugEnabled { get; private set; }
 
+		/// <summary>
+		/// If true, the error 500 is shown if any file not exists
+		/// </summary>
+		public bool FileErrorsEnabled { get; private set; }
+
         /// <summary>
         /// <para>This has no effect if <see cref="DebugEnabled"/> is <c>false</c> or <see cref="WebExtensions.CombresUrl"/> is used.</para>
         /// <para>If this is set to <c>true</c>, Combres will generate script and link tags corresponding to each 
@@ -168,6 +173,13 @@ namespace Combres
                                : debugEnabled.Equals(SchemaConstants.Set.Auto, StringComparison.OrdinalIgnoreCase)
                                      ? HttpContext.Current.IsDebuggingEnabled // use web.config if autor
                                      : bool.Parse(debugEnabled);
+
+			var fileErrorsEnabled = xe.Attr<string>(SchemaConstants.Set.FileErrorsEnabled);
+			FileErrorsEnabled = string.IsNullOrEmpty(fileErrorsEnabled)
+							   ? Settings.ShownotFoundFilesError // use parent if not specified
+							   : fileErrorsEnabled.Equals(SchemaConstants.Set.Auto, StringComparison.OrdinalIgnoreCase)
+									 ? HttpContext.Current.IsDebuggingEnabled // use web.config if autor
+									 : bool.Parse(fileErrorsEnabled);
 
             IgnorePipelineWhenDebug = (bool)xe.Attr<string>(SchemaConstants.Set.IgnorePipelineWhenDebug)
                 .ConvertToType(typeof(bool), Settings.DefaultIgnorePipelineWhenDebug);

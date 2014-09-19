@@ -114,7 +114,16 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="defaultIgnorePipelineWhenDebug" type="xs:boolean" />
+	<xs:attribute name="shownotFoundFilesError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="true" />
+				<xs:enumeration value="false" />
+				<xs:enumeration value="auto" />
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:attribute>
+	<xs:attribute name="defaultIgnorePipelineWhenDebug" type="xs:boolean" />
     <xs:attribute name="defaultCompressionEnabled" type="xs:boolean" />
     <xs:attribute name="defaultCssMinifierRef" type="xs:string" />
     <xs:attribute name="defaultJSMinifierRef" type="xs:string" />
@@ -163,7 +172,7 @@
     <xs:attribute name="mode">
       <xs:simpleType>
         <xs:restriction base="xs:string">
-          <xs:pattern value="[s|S]tatic|[d|D]ynamic"/>
+          <xs:pattern value="[s|S]tatic|[d|D]ynamic|[a|A]uto"/>
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
